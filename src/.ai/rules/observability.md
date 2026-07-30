@@ -3,9 +3,6 @@
 Every uncaught exception — server (Nitro) or client (Vue/browser) — must be logged and, above the
 threshold, alerted through one shared pipeline.
 
-This file defines the target observability contract. Verify that the referenced files exist before
-relying on the pipeline in a consuming project.
-
 ## Error groups
 
 - **Server expected (client-caused), HTTP 4xx** — validation, not found, conflict. Return a safe error,
@@ -21,10 +18,10 @@ runtime; only runtime exceptions flow through this pipeline.
 
 ## Error handling
 
-- Throw `AppError` (`server/utils/app-error.ts`) for known failures with a `statusCode`, a stable
+- Throw `AppError` (`server/exceptions/app-error.ts`) for known failures with a `statusCode`, a stable
   `code`, a `severity`, and a client-safe `publicMessage`. Keep internal detail in the error `message`.
-- At the `server/api` boundary, normalize with `normalizeError` and return `toSafeH3Error`; never leak
-  raw provider/internal errors, messages, or stacks to the client.
+- At the `server/api` boundary, normalize with `server/exceptions/normalize-error.ts` and return
+  `toSafeH3Error`; never leak raw provider/internal errors, messages, or stacks to the client.
 - Server: the Nitro error plugin (`server/plugins/error.ts`) is the single place that logs and alerts
   uncaught errors. Client: `app/plugins/error-report.client.ts` forwards uncaught client errors to
   `POST /api/_error-report`, which logs and alerts through the same code. Do not duplicate alerting in
@@ -32,7 +29,7 @@ runtime; only runtime exceptions flow through this pipeline.
 
 ## Logging
 
-- Log structured JSON to stdout via `logger` (`server/utils/logger.ts`), one event per line.
+- Log structured JSON to stdout via `logger` (`server/logging/logger.ts`), one event per line.
 - Standard fields: `level`, `time`, `message`, `code`, `statusCode`, `severity`, `requestId`,
   `method`, `path`, `source` (`server` | `client`).
 - Correlate with `requestId` (set by `server/middleware/request-id.ts`).
@@ -42,7 +39,7 @@ runtime; only runtime exceptions flow through this pipeline.
 
 ## Alerting (Slack / Google Chat / future channels)
 
-- Alerts go through `notifyError` (`server/utils/notify.ts`), configured via
+- Alerts go through `notifyError` (`server/notifications/notify-error.ts`), configured via
   `runtimeConfig.errorNotify`.
 - **Master switch** `errorNotify.enabled` turns all alerting on/off.
 - **Each channel has its own `enabled` toggle and webhook**; a channel fires only when enabled AND its
@@ -57,8 +54,8 @@ runtime; only runtime exceptions flow through this pipeline.
 
 ### Adding a channel (e.g. Gmail/email)
 
-1. Add an adapter to `ADAPTERS` in `notify.ts` implementing `isConfigured` + `send` (email uses a
-   different transport than a webhook — that stays inside the adapter).
+1. Add an adapter under `server/notifications/channels/` (email uses a different transport than a
+   webhook — that stays inside the adapter).
 2. Add a matching key with an `enabled` toggle and its transport config to `runtimeConfig.errorNotify`.
 3. Document the env vars in `.env.example`.
 
@@ -66,6 +63,8 @@ runtime; only runtime exceptions flow through this pipeline.
 
 - `POST /api/_error-report` is public, so it is guarded: per-IP fixed-window rate limit, payload size
   caps, and the shared dedup. It never trusts client input beyond logging strings.
+- `errorReporting.trustProxy` is `false` by default. Enable it only behind a trusted reverse proxy
+  that overwrites `X-Forwarded-For`.
 
 ## Known follow-ups (not yet implemented)
 

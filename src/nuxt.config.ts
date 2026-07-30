@@ -1,17 +1,31 @@
 import svgLoader from 'vite-svg-loader';
 import tailwindcss from '@tailwindcss/vite';
 
+const appName = process.env.NUXT_PUBLIC_APP_NAME || 'Nuxt Application';
+
 export default defineNuxtConfig({
   app: {
     baseURL: process.env.BASE_URL,
     head: {
-      title: 'Nuxt Application',
+      title: appName,
     },
   },
 
-  modules: ['@pinia/nuxt'],
+  modules: ['@pinia/nuxt', '@nuxtjs/i18n'],
 
   css: ['@/assets/style/tailwind.css'],
+
+  i18n: {
+    defaultLocale: 'en',
+    strategy: 'prefix_except_default',
+    locales: [
+      {
+        code: 'en',
+        language: 'en',
+        file: 'en/index.ts',
+      },
+    ],
+  },
 
   vite: {
     plugins: [svgLoader(), tailwindcss()],
@@ -22,8 +36,34 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     apiSecret: '',
+    errorReporting: {
+      maxPayloadBytes: 8_192,
+      trustProxy: false,
+      rateLimit: {
+        maxRequests: 10,
+        windowSeconds: 60,
+      },
+    },
+    errorNotify: {
+      enabled: false,
+      minSeverity: 'error',
+      dedupWindowSeconds: 300,
+      timeoutMilliseconds: 5_000,
+      slack: {
+        enabled: false,
+        webhookUrl: '',
+        minSeverity: '',
+      },
+      googleChat: {
+        enabled: false,
+        webhookUrl: '',
+        minSeverity: '',
+      },
+    },
     public: {
       apiBase: '',
+      appName,
+      errorReportingEnabled: true,
     },
   },
 

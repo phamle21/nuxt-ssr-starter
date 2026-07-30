@@ -56,6 +56,9 @@ src/
 ├── server/                              # Nitro; sở hữu transport tới backend + secret
 │   ├── api/                             # HTTP endpoint: parse input, set status, gọi service
 │   │   └── <resource>/                  # mỗi endpoint = 1 use case (index.get.ts, [id].get.ts...)
+│   ├── exceptions/                      # AppError + normalize lỗi về public contract an toàn
+│   ├── logging/                         # structured logger, redaction, rate limit
+│   ├── notifications/                   # notify orchestration + adapter theo channel
 │   ├── routes/                          # non-API route (sitemap.xml, robots.txt...) — thêm khi cần
 │   ├── services/                        # orchestration use case; tách khỏi HTTP để dễ test
 │   │   └── <domain>/
@@ -68,6 +71,7 @@ src/
 ├── shared/                              # app và server đều import; không import ngược
 │   ├── contracts/                       # shape dữ liệu qua biên Nitro (server↔app, serializable)
 │   ├── constants/                       # hằng dùng chung
+│   ├── logging/                         # contract error report dùng chung app↔server
 │   └── types/                           # kiểu thuần dùng chung (enum, union nhỏ) — không phải payload API
 └── i18n/
     └── locales/

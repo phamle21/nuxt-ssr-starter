@@ -1,3 +1,6 @@
 export default {
-  appName: 'Nuxt Application',
+  actions: {
+    close: 'Close',
+    retry: 'Try again',
+  },
 };
