@@ -1,14 +1,17 @@
 # Error Handling, Logging & Alerting Rules
 
-Every uncaught exception — server (Nitro) or client (Vue/browser) — is logged and, above the threshold,
-alerted through one shared pipeline.
+Every uncaught exception — server (Nitro) or client (Vue/browser) — must be logged and, above the
+threshold, alerted through one shared pipeline.
+
+This file defines the target observability contract. Verify that the referenced files exist before
+relying on the pipeline in a consuming project.
 
 ## Error groups
 
 - **Server expected (client-caused), HTTP 4xx** — validation, not found, conflict. Return a safe error,
   log at `warn`, do **not** alert.
 - **Server unexpected, HTTP 5xx / uncaught** — bugs. Safe 500, log at `error`, alert.
-- **Server upstream (Bagisto), 502/504** — provider down/timeout. Safe error, log at `error`, alert.
+- **Server upstream, 502/504** — provider down/timeout. Safe error, log at `error`, alert.
 - **Client runtime exceptions** — Vue render errors, `window.onerror`, unhandled rejections. No HTTP
   status; reported to the server, logged, and alerted (rate-limited).
 - **Client data-fetch errors** — handled in-component via loading/empty/error/success states.

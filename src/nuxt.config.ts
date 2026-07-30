@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   app: {
     baseURL: process.env.BASE_URL,
     head: {
-      title: 'Bagisto Storefront',
+      title: 'Nuxt Application',
     },
   },
 

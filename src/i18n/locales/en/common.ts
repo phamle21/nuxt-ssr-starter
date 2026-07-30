@@ -1,3 +1,3 @@
 export default {
-  appName: 'Bagisto Storefront',
-}
+  appName: 'Nuxt Application',
+};

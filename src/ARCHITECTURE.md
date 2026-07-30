@@ -2,16 +2,15 @@
 
 ## Phạm vi
 
-Tài liệu mô tả **cấu trúc FE cơ bản, tái dùng được cho nhiều dự án**. Trọng tâm là cách tổ chức
-`app/` và các biên (`app / server / shared`), quy ước và luồng dữ liệu — **không** gắn với domain cụ
-thể.
+Tài liệu mô tả **cấu trúc ứng dụng Nuxt cơ bản, tái dùng được cho nhiều dự án**. Trọng tâm là cách tổ
+chức `app/` và các biên (`app / server / shared`), quy ước và luồng dữ liệu — **không** gắn với
+domain hoặc backend cụ thể.
 
-- Domain (ecommerce hay khác) quyết định sau; khi có, chỉ thêm folder theo domain, không đổi biên.
-- Backend cụ thể của dự án này là **Bagisto**, nhưng được cô lập sau `server/integrations/<provider>/`.
-  Tài liệu này cố ý không đi sâu backend — FE không phụ thuộc trực tiếp backend nào.
-- i18n đã bật bằng `@nuxtjs/i18n`; English là locale mặc định và URL dùng
-  `prefix_except_default`. Quy ước viết message nằm duy nhất ở
-  [.ai/rules/i18n.md](./.ai/rules/i18n.md).
+- Domain được quyết định ở từng dự án; khi có, chỉ thêm folder theo domain, không đổi biên.
+- Backend/provider được cô lập sau `server/integrations/<provider>/`. Tài liệu này cố ý không đi sâu
+  backend — app không phụ thuộc trực tiếp provider nào.
+- Khi bật i18n, dùng `@nuxtjs/i18n`; English là locale mặc định và URL dùng
+  `prefix_except_default`. Quy ước message nằm duy nhất ở [.ai/rules/i18n.md](./.ai/rules/i18n.md).
 
 ## Nguyên tắc nền
 
@@ -38,7 +37,7 @@ src/
 │   │       ├── tailwind.css             # entry Tailwind + @theme
 │   │       └── tokens.css               # design tokens (màu, spacing, radius) — thêm khi cần
 │   ├── components/                      # component tái dùng, auto-import theo tên
-│   │   ├── ui/                          # primitive không nghiệp vụ: Button, Input, Price, Modal...
+│   │   ├── ui/                          # primitive không nghiệp vụ: Button, Input, Badge, Modal...
 │   │   ├── layout/                      # Header, Nav, Footer, Drawer
 │   │   └── <feature>/                   # component theo domain (ví dụ, tùy dự án)
 │   ├── composables/                     # logic có state tái dùng; gọi Nitro qua $fetch/useFetch
@@ -47,7 +46,7 @@ src/
 │   ├── stores/                          # Pinia: chỉ state dùng chung nhiều view
 │   │   └── <feature>.ts
 │   ├── layouts/
-│   │   └── default.vue                  # thêm layout khác khi cần (checkout, account...)
+│   │   └── default.vue                  # thêm layout khác khi cần (public, authenticated...)
 │   ├── middleware/                      # route middleware (auth, guest...) — thêm khi cần
 │   ├── plugins/                         # app/browser integration — thêm khi cần
 │   ├── pages/                           # file-based routing = view + điều phối data + SEO meta
@@ -61,7 +60,7 @@ src/
 │   ├── services/                        # orchestration use case; tách khỏi HTTP để dễ test
 │   │   └── <domain>/
 │   ├── integrations/
-│   │   └── <provider>/                  # nơi DUY NHẤT biết shape/transport backend (dự án này: bagisto)
+│   │   └── <provider>/                  # nơi DUY NHẤT biết shape/transport backend
 │   │       ├── client.ts                # transport: endpoint, auth header, timeout, xử lý lỗi
 │   │       ├── dto/                      # kiểu dữ liệu thô đúng theo backend
 │   │       └── mappers/                  # DTO thô → shared/contracts (ổn định)
@@ -172,7 +171,7 @@ xử lý lỗi / log / alert cụ thể ở [.ai/rules/observability.md](./.ai/r
 - Validate input không tin cậy ở `server/api`; giữ SSR request isolation.
 - Không thêm dependency (auth/validation/cache lib...) khi chưa có yêu cầu và chưa được duyệt.
 
-## Ghi chú theo dự án
+## Ghi chú khi áp dụng
 
-- **Provider:** dự án này là **Bagisto** → implement dưới `server/integrations/bagisto/`. Domain,
-  cache policy và request context được chốt theo yêu cầu của từng tính năng.
+- Tạo `server/integrations/<provider>/` chỉ khi dự án đã chọn provider và có code tích hợp thật.
+- Domain, cache policy và request context phải được chốt theo yêu cầu của từng dự án/tính năng.

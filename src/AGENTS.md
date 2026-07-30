@@ -71,9 +71,9 @@ spans them.
 
 ## Commands
 
-Use the scripts declared in `package.json`; do not duplicate or invent command names. When using the
-project Docker environment, run scripts with `docker compose exec storefront yarn <script>` from the
-repository root. See [README.md](../README.md) for startup commands.
+Use the scripts declared in `package.json`; do not duplicate or invent command names. Run scripts
+with `yarn <script>` from this directory. If a consuming project provides a containerized
+environment, follow that project's repository-level documentation.
 
 Use `yarn verify:quick` during iteration. Run `yarn verify` before final handoff unless the change is
 documentation-only.
