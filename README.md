@@ -66,6 +66,3 @@ docker compose down
 # Delete dependency caches as well
 docker compose down --volumes
 ```
-
-`NUXT_API_SECRET` is server-only. Do not expose it through a
-`NUXT_PUBLIC_*` variable.

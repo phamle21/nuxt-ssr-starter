@@ -125,13 +125,14 @@ page/component
 
 ```text
 component (emit)
-  └─ composable action → $fetch('/api/<resource>', { method: 'POST' })
+  └─ useAppRequest action → $api('/api/<resource>', { method: 'POST' })
        └─ server/api → service → integration (mutation) → mapper
        ⇐ contract → cập nhật store → refresh UI liên quan
 ```
 
-Read render-critical dùng `useFetch`/`useAsyncData`; mutation dùng `$fetch` (không top-level
-`useFetch`).
+Read render-critical dùng `useAppFetch`; mutation dùng `useAppRequest`. Hai composable cung cấp
+application API boundary thống nhất và dùng chung error contract. Feature code không gọi trực tiếp
+`$fetch`/`useFetch` cho application API.
 
 ## Quy tắc SSR & hydration
 
@@ -152,7 +153,8 @@ Read render-critical dùng `useFetch`/`useAsyncData`; mutation dùng `$fetch` (k
 
 ## Error strategy
 
-Nitro boundary trả lỗi ổn định, an toàn — không rò raw provider error:
+Nitro boundary dùng `defineApiHandler` để normalize lỗi về `AppError` và trả `ApiErrorData` ổn định,
+an toàn — không rò raw provider error:
 
 ```text
 400  input không hợp lệ
@@ -164,6 +166,10 @@ Nitro boundary trả lỗi ổn định, an toàn — không rò raw provider er
 502  backend trả response không hợp lệ
 504  backend timeout
 ```
+
+`ApiErrorData` chứa stable `code`, public `message`, `requestId`, và khi phù hợp có `fields` hoặc
+`retryAfter`. App resolve presentation riêng theo context: `inline`, `toast`, `dialog`, `page`, hoặc
+`silent`. Server error policy và UI presentation policy là hai trách nhiệm độc lập.
 
 Log đủ context để định vị lỗi, nhưng không log credential, token, session id hay personal data. Chuẩn
 xử lý lỗi / log / alert cụ thể ở [.ai/rules/observability.md](./.ai/rules/observability.md).

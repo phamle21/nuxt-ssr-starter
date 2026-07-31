@@ -26,7 +26,31 @@ describe('normalizeError', () => {
     expect(safeError.statusMessage).not.toContain('Database');
     expect(safeError.data).toEqual({
       code: 'INTERNAL_ERROR',
+      message: 'The application could not complete the request.',
       requestId: 'request-123',
+    });
+  });
+
+  it('preserves safe validation fields and retry metadata', () => {
+    const normalized = new AppError('Validation detail', {
+      statusCode: 422,
+      code: 'INVALID_INPUT',
+      severity: 'warn',
+      publicMessage: 'Please check the input.',
+      fields: {
+        email: ['Email is required.'],
+      },
+      retryAfter: 30,
+    });
+
+    expect(toSafeH3Error(normalized, 'request-456').data).toEqual({
+      code: 'INVALID_INPUT',
+      message: 'Please check the input.',
+      requestId: 'request-456',
+      fields: {
+        email: ['Email is required.'],
+      },
+      retryAfter: 30,
     });
   });
 

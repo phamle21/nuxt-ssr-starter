@@ -117,22 +117,24 @@ export async function notifyErrorWithConfig(
     const dedupWindowMilliseconds = readPositiveNumber(config.dedupWindowSeconds, 300) * 1_000;
     const fingerprint = createFingerprint(notification);
     const now = Date.now();
+    const pendingChannels = eligibleChannels.filter((channel) => !isDuplicate(`${channel.name}:${fingerprint}`, dedupWindowMilliseconds, now));
 
-    if (isDuplicate(fingerprint, dedupWindowMilliseconds, now)) {
+    if (pendingChannels.length === 0) {
       return;
     }
 
-    const results = await Promise.allSettled(eligibleChannels.map((channel) => channel.send()));
-    const hasSuccessfulDelivery = results.some((result) => result.status === 'fulfilled');
-
-    if (!hasSuccessfulDelivery) {
-      recentNotifications.delete(fingerprint);
-    }
+    const results = await Promise.allSettled(pendingChannels.map((channel) => channel.send()));
 
     results.forEach((result, index) => {
       if (result.status === 'rejected') {
+        const channel = pendingChannels[index];
+
+        if (channel) {
+          recentNotifications.delete(`${channel.name}:${fingerprint}`);
+        }
+
         logger.warn('Error notification delivery failed', {
-          channel: eligibleChannels[index]?.name,
+          channel: channel?.name,
           code: notification.code,
           requestId: notification.requestId,
         });

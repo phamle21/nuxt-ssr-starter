@@ -87,4 +87,15 @@ describe('notifyErrorWithConfig', () => {
     expect(sendSlackNotification).toHaveBeenCalledOnce();
     expect(sendGoogleChatNotification).toHaveBeenCalledOnce();
   });
+
+  it('retries only the channel whose previous delivery failed', async () => {
+    const notification = createNotification('CHANNEL_RETRY_TEST');
+    sendGoogleChatNotification.mockRejectedValueOnce(new Error('Google Chat unavailable'));
+
+    await notifyErrorWithConfig(notification, createConfig(), senders);
+    await notifyErrorWithConfig(notification, createConfig(), senders);
+
+    expect(sendSlackNotification).toHaveBeenCalledOnce();
+    expect(sendGoogleChatNotification).toHaveBeenCalledTimes(2);
+  });
 });

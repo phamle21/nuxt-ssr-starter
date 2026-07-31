@@ -5,7 +5,7 @@ export default defineVitestConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    include: ['./app/components/**/*.test.ts', './app/testing/**/*.test.ts', './server/**/*.test.ts', './shared/**/*.test.ts'],
+    include: ['./app/**/*.test.ts', './server/**/*.test.ts', './shared/**/*.test.ts'],
     passWithNoTests: true,
     setupFiles: ['./app/testing/setup.ts'],
   },

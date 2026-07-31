@@ -35,7 +35,6 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    apiSecret: '',
     errorReporting: {
       maxPayloadBytes: 8_192,
       trustProxy: false,
@@ -61,7 +60,6 @@ export default defineNuxtConfig({
       },
     },
     public: {
-      apiBase: '',
       appName,
       errorReportingEnabled: true,
     },

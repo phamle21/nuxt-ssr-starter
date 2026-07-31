@@ -20,8 +20,11 @@ runtime; only runtime exceptions flow through this pipeline.
 
 - Throw `AppError` (`server/exceptions/app-error.ts`) for known failures with a `statusCode`, a stable
   `code`, a `severity`, and a client-safe `publicMessage`. Keep internal detail in the error `message`.
-- At the `server/api` boundary, normalize with `server/exceptions/normalize-error.ts` and return
-  `toSafeH3Error`; never leak raw provider/internal errors, messages, or stacks to the client.
+- Wrap `server/api` handlers with `defineApiHandler`; it normalizes with
+  `server/exceptions/normalize-error.ts`, sets response metadata, and returns `toSafeH3Error`.
+  Never leak raw provider/internal errors, messages, or stacks to the client.
+- Application reads use `useAppFetch`; mutations use `useAppRequest`. Presentation remains a client
+  concern and may be `inline`, `toast`, `dialog`, `page`, or `silent`.
 - Server: the Nitro error plugin (`server/plugins/error.ts`) is the single place that logs and alerts
   uncaught errors. Client: `app/plugins/error-report.client.ts` forwards uncaught client errors to
   `POST /api/_error-report`, which logs and alerts through the same code. Do not duplicate alerting in
@@ -46,8 +49,9 @@ runtime; only runtime exceptions flow through this pipeline.
   webhook is set. Multiple channels can be active at once — an error goes to every eligible channel.
 - Threshold: a channel uses its own `minSeverity` when set, else the global `errorNotify.minSeverity`
   (default `error`). Do not page on expected 4xx.
-- **Deduplication**: identical alerts are suppressed within `dedupWindowSeconds` (default 300) to
-  prevent floods. In-memory/per-instance — on serverless it dedupes per instance only.
+- **Deduplication**: identical alerts are suppressed per channel within `dedupWindowSeconds`
+  (default 300) to prevent floods. In-memory/per-instance — on serverless it dedupes per instance
+  only.
 - Alerting is non-blocking and must never throw into the request path.
 - Never commit a webhook URL; set it via `NUXT_ERROR_NOTIFY_<CHANNEL>_WEBHOOK_URL` (secret,
   server-only). Keep payloads free of secrets and personal data.

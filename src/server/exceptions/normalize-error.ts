@@ -1,4 +1,5 @@
 import { createError, type H3Error } from 'h3';
+import type { ApiErrorData } from '../../shared/contracts/api-error';
 import { AppError } from './app-error';
 
 const publicMessages: Record<number, string> = {
@@ -10,8 +11,27 @@ const publicMessages: Record<number, string> = {
   413: 'The request payload is too large.',
   422: 'The request could not be processed.',
   429: 'Too many requests. Please try again later.',
+  500: 'The application could not complete the request.',
+  501: 'This operation is not supported.',
   502: 'An upstream service returned an invalid response.',
+  503: 'The service is temporarily unavailable.',
   504: 'An upstream service timed out.',
+};
+
+const statusMessages: Record<number, string> = {
+  400: 'Bad Request',
+  401: 'Unauthorized',
+  403: 'Forbidden',
+  404: 'Not Found',
+  409: 'Conflict',
+  413: 'Content Too Large',
+  422: 'Unprocessable Content',
+  429: 'Too Many Requests',
+  500: 'Internal Server Error',
+  501: 'Not Implemented',
+  502: 'Bad Gateway',
+  503: 'Service Unavailable',
+  504: 'Gateway Timeout',
 };
 
 function readStatusCode(error: unknown): number | undefined {
@@ -56,13 +76,24 @@ export function normalizeError(error: unknown): AppError {
 }
 
 export function toSafeH3Error(error: AppError, requestId?: string): H3Error {
+  const data: ApiErrorData = {
+    code: error.code,
+    message: error.publicMessage,
+    requestId,
+  };
+
+  if (error.fields) {
+    data.fields = error.fields;
+  }
+
+  if (error.retryAfter) {
+    data.retryAfter = error.retryAfter;
+  }
+
   return createError({
     statusCode: error.statusCode,
-    statusMessage: error.publicMessage,
-    data: {
-      code: error.code,
-      requestId,
-    },
+    statusMessage: statusMessages[error.statusCode] ?? 'Request Failed',
+    data,
     cause: error,
   });
 }
