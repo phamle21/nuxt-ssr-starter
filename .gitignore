@@ -1,7 +1,51 @@
+# Logs
+*.log
+logs
+lerna-debug.log*
+*storybook.log
+/server/_logs
+
+# Nuxt/Vue build artifacts
+.nuxt
+.output
+nuxt.d.ts
+
+# compiled output
+/dist
+/storybook-static
+/node_modules
+
+# Cache files
+.eslintcache
+
+# Package managers
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+pnpm-debug.log*
+
+# Environment & secrets
 .env
-src/.nuxt/
-src/.output/
-src/node_modules/
-src/.yarn/cache/
-src/coverage/
-src/storybook-static/
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+*/testing/snapshots/current
+*/testing/snapshots/difference
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+*.code-workspace
+*.tsbuildinfo
