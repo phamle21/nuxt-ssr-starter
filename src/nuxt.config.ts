@@ -7,7 +7,22 @@ export default defineNuxtConfig({
   app: {
     baseURL: process.env.BASE_URL,
     head: {
+      htmlAttrs: {
+        lang: 'en',
+      },
       title: appName,
+      titleTemplate: `%s | ${appName}`,
+    },
+  },
+
+  routeRules: {
+    '/**': {
+      headers: {
+        'permissions-policy': 'camera=(), geolocation=(), microphone=()',
+        'referrer-policy': 'strict-origin-when-cross-origin',
+        'x-content-type-options': 'nosniff',
+        'x-frame-options': 'SAMEORIGIN',
+      },
     },
   },
 

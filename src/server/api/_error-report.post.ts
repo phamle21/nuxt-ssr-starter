@@ -1,6 +1,6 @@
-import { getHeader, getRequestIP, readRawBody, setResponseStatus } from 'h3';
+import { getHeader, getRequestIP, setResponseStatus } from 'h3';
 import { AppError } from '../exceptions/app-error';
-import { parseClientErrorReport } from '../logging/client-error-report';
+import { assertClientErrorReportContentLength, parseClientErrorReport, readLimitedClientErrorReportBody } from '../logging/client-error-report';
 import { FixedWindowRateLimiter } from '../logging/fixed-window-rate-limiter';
 import { logger } from '../logging/logger';
 import { notifyError } from '../notifications/notify-error';
@@ -26,16 +26,7 @@ export default defineApiHandler(async (event) => {
   }
 
   const maxPayloadBytes = readPositiveNumber(config.maxPayloadBytes, 8_192);
-  const contentLength = Number(getHeader(event, 'content-length') ?? 0);
-
-  if (contentLength > maxPayloadBytes) {
-    throw new AppError('Client error report exceeds the payload limit', {
-      statusCode: 413,
-      code: 'ERROR_REPORT_TOO_LARGE',
-      severity: 'warn',
-      publicMessage: 'The error report is too large.',
-    });
-  }
+  assertClientErrorReportContentLength(getHeader(event, 'content-length'), maxPayloadBytes);
 
   const maxRequests = readPositiveNumber(config.rateLimit.maxRequests, 10);
   const windowMilliseconds = readPositiveNumber(config.rateLimit.windowSeconds, 60) * 1_000;
@@ -50,16 +41,7 @@ export default defineApiHandler(async (event) => {
     });
   }
 
-  const rawBody = await readRawBody(event, 'utf8');
-
-  if (rawBody && Buffer.byteLength(rawBody, 'utf8') > maxPayloadBytes) {
-    throw new AppError('Client error report exceeds the payload limit', {
-      statusCode: 413,
-      code: 'ERROR_REPORT_TOO_LARGE',
-      severity: 'warn',
-      publicMessage: 'The error report is too large.',
-    });
-  }
+  const rawBody = await readLimitedClientErrorReportBody(event.node.req, maxPayloadBytes);
 
   const report = parseClientErrorReport(rawBody);
 
@@ -72,6 +54,7 @@ export default defineApiHandler(async (event) => {
     path: report.route,
     source: 'client',
     errorName: report.name,
+    errorMessage: report.message,
   });
 
   void notifyError({

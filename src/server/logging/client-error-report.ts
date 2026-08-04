@@ -1,6 +1,45 @@
 import { clientErrorReportLimits, type ClientErrorReport } from '../../shared/logging/error-report';
 import { AppError } from '../exceptions/app-error';
 
+export function assertClientErrorReportContentLength(contentLength: string | undefined, maxPayloadBytes: number): void {
+  if (contentLength && /^\d+$/.test(contentLength) && Number(contentLength) > maxPayloadBytes) {
+    throw new AppError('Client error report exceeds the payload limit', {
+      statusCode: 413,
+      code: 'ERROR_REPORT_TOO_LARGE',
+      severity: 'warn',
+      publicMessage: 'The error report is too large.',
+    });
+  }
+}
+
+export async function readLimitedClientErrorReportBody(body: AsyncIterable<Uint8Array>, maxPayloadBytes: number): Promise<string | undefined> {
+  const chunks: Uint8Array[] = [];
+  let payloadBytes = 0;
+  let isPayloadTooLarge = false;
+
+  for await (const chunk of body) {
+    payloadBytes += chunk.byteLength;
+
+    if (payloadBytes > maxPayloadBytes) {
+      isPayloadTooLarge = true;
+      chunks.length = 0;
+    } else if (!isPayloadTooLarge) {
+      chunks.push(chunk);
+    }
+  }
+
+  if (isPayloadTooLarge) {
+    throw new AppError('Client error report exceeds the payload limit', {
+      statusCode: 413,
+      code: 'ERROR_REPORT_TOO_LARGE',
+      severity: 'warn',
+      publicMessage: 'The error report is too large.',
+    });
+  }
+
+  return payloadBytes === 0 ? undefined : Buffer.concat(chunks).toString('utf8');
+}
+
 function readOptionalString(record: Record<string, unknown>, key: keyof ClientErrorReport, maxLength: number): string | undefined {
   const value = record[key];
 

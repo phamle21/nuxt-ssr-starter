@@ -20,6 +20,7 @@ describe('AppErrorPresenter', () => {
     await wrapper.get('button').trigger('click');
 
     expect(wrapper.emitted('dismiss')).toHaveLength(1);
+    wrapper.unmount();
   });
 
   it('renders toast mode as an alert', () => {
@@ -31,6 +32,7 @@ describe('AppErrorPresenter', () => {
     });
 
     expect(wrapper.get('[role="alert"]').text()).toContain(props.title);
+    wrapper.unmount();
   });
 
   it('dismisses a dialog with the Escape key', async () => {
@@ -38,8 +40,42 @@ describe('AppErrorPresenter', () => {
       props,
     });
 
-    await wrapper.get('[role="dialog"]').trigger('keydown', { key: 'Escape' });
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' }));
 
     expect(wrapper.emitted('dismiss')).toHaveLength(1);
+    wrapper.unmount();
+  });
+
+  it('moves focus into the dialog and restores it after unmount', async () => {
+    const trigger = document.createElement('button');
+    document.body.append(trigger);
+    trigger.focus();
+
+    const wrapper = mount(AppErrorPresenter, {
+      attachTo: document.body,
+      props,
+    });
+
+    await wrapper.vm.$nextTick();
+    expect(document.activeElement).toBe(wrapper.get('button').element);
+
+    wrapper.unmount();
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+
+  it('keeps tab focus inside the dialog', async () => {
+    const wrapper = mount(AppErrorPresenter, {
+      attachTo: document.body,
+      props,
+    });
+    const closeButton = wrapper.get('button').element;
+
+    await wrapper.vm.$nextTick();
+    closeButton.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', bubbles: true, cancelable: true }));
+
+    expect(document.activeElement).toBe(closeButton);
+    wrapper.unmount();
   });
 });

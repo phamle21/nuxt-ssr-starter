@@ -60,8 +60,18 @@ export default defineNuxtPlugin((nuxtApp) => {
     }).catch(() => undefined);
   };
 
-  nuxtApp.hook('vue:error', (error) => reportError(error));
-  nuxtApp.hook('app:error', (error) => reportError(error));
-  window.addEventListener('error', (event) => reportError(event.error));
-  window.addEventListener('unhandledrejection', (event) => reportError(event.reason));
+  const handleWindowError = (event: ErrorEvent) => reportError(event.error);
+  const handleUnhandledRejection = (event: PromiseRejectionEvent) => reportError(event.reason);
+  const removeVueErrorHook = nuxtApp.hook('vue:error', (error) => reportError(error));
+  const removeAppErrorHook = nuxtApp.hook('app:error', (error) => reportError(error));
+
+  window.addEventListener('error', handleWindowError);
+  window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+  import.meta.hot?.dispose(() => {
+    removeVueErrorHook();
+    removeAppErrorHook();
+    window.removeEventListener('error', handleWindowError);
+    window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+  });
 });
