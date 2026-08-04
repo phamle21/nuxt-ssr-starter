@@ -1,10 +1,7 @@
-# Assets directory
-The assets/ directory is used to add all the website assets that will be processed by the build tool (Webpack or Vite).
+# Application assets
 
-The directory usually contains the following types of files:
+Files in this directory are processed and fingerprinted by Vite. Use only the canonical
+subdirectories: `fonts/`, `icons/`, `images/`, and `style/`.
 
-- Stylesheets (CSS, SASS, etc.)
-- Fonts
-- Images that won't be served from the public/ directory.
-
-If you want to serve assets from the server, it is recommended taking a look at the public/ directory.
+The mandatory placement, naming, format, SVG, and accessibility conventions are defined in
+[`.ai/rules/assets.md`](../../.ai/rules/assets.md). Do not create feature-local asset directories.

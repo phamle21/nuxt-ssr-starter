@@ -19,6 +19,7 @@ Docker setup, service addresses, and startup commands live in the repository-lev
 - Yarn 4 only
 - Pinia for shared application state
 - Tailwind CSS 4 primary; SCSS only for exceptional custom styling — see `.ai/rules/styling.md`
+- Canonical image, SVG, font, and public-file placement — see `.ai/rules/assets.md`
 - Oxlint and Oxfmt
 - Vitest and Vue Test Utils
 - Storybook for reusable UI components
@@ -66,8 +67,8 @@ live in `.ai/rules/nuxt.md`.
 | Add metadata, structured data, or search discoverability | `.ai/skills/implement-seo/SKILL.md` |
 | Review code, a working tree, or a proposed change | `.ai/skills/review-nuxt-code/SKILL.md` |
 
-For custom CSS/SCSS follow `.ai/rules/styling.md`. Load multiple skills only when the task genuinely
-spans them.
+For assets follow `.ai/rules/assets.md`. For custom CSS/SCSS follow `.ai/rules/styling.md`. Load
+multiple skills only when the task genuinely spans them.
 
 ## Commands
 

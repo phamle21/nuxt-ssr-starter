@@ -1,4 +1,9 @@
-# Public directory
-The public/ directory is directly served at server root and contains public files that have to keep their names (e.g. robots.txt) or likely won't change (e.g. favicon.ico).
+# Public assets
 
-💡 The public/ directory is known as the static/ directory in Nuxt 2.
+Files in this directory are served unchanged from the site root. Put static images in `images/` and
+static icons in `icons/`. Keep conventional root files such as `favicon.ico`, `robots.txt`, and
+`site.webmanifest` here when required.
+
+The canonical placement and naming rules are defined in
+[`.ai/rules/assets.md`](../.ai/rules/assets.md). Do not import public files from application code;
+reference them with root-relative URLs.
