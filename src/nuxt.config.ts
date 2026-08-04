@@ -12,6 +12,13 @@ export default defineNuxtConfig({
       },
       title: appName,
       titleTemplate: `%s | ${appName}`,
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/x-icon',
+          href: '/favicon.ico',
+        },
+      ],
     },
   },
 
