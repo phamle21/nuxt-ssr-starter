@@ -1,7 +1,4 @@
-ClientOnly {
-  display: block;
-}
-
 body {
-  background-color: var(--color-gray-200);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
 }

@@ -1,6 +1,6 @@
 export default {
   title: 'Something went wrong',
-  message: 'The application could not complete your request.',
+  message: 'The application could not complete the request.',
   messages: {
     authentication: 'Authentication is required.',
     conflict: 'The request conflicts with the current state.',

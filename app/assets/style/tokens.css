@@ -1,0 +1,29 @@
+@theme inline {
+  --color-action: var(--app-action);
+  --color-focus: var(--app-focus);
+  --color-muted: var(--app-muted);
+  --color-on-action: var(--app-on-action);
+  --color-on-surface: var(--app-on-surface);
+  --color-overlay: var(--app-overlay);
+  --color-surface: var(--app-surface);
+}
+
+:root {
+  --app-action: #0f172a;
+  --app-focus: #0f172a;
+  --app-muted: #475569;
+  --app-on-action: #ffffff;
+  --app-on-surface: #020617;
+  --app-overlay: rgb(0 0 0 / 50%);
+  --app-surface: #ffffff;
+}
+
+[data-theme='dark'] {
+  --app-action: #e2e8f0;
+  --app-focus: #e2e8f0;
+  --app-muted: #94a3b8;
+  --app-on-action: #0f172a;
+  --app-on-surface: #f8fafc;
+  --app-overlay: rgb(0 0 0 / 70%);
+  --app-surface: #0f172a;
+}

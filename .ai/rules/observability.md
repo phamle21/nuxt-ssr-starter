@@ -74,4 +74,6 @@ runtime; only runtime exceptions flow through this pipeline.
 ## Known follow-ups (not yet implemented)
 
 - Persist dedup/rate-limit in shared storage (e.g. KV) for correct behavior across instances.
+- The in-memory rate limiter evicts the oldest entry at its capacity, so high client-key cardinality
+  can reduce rate-limit accuracy.
 - Consider authenticating or signing client reports if abuse volume becomes a problem.

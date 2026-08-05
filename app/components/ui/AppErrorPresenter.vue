@@ -2,13 +2,13 @@
   <div
     v-if="mode === 'dialog'"
     ref="dialogElement"
-    class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+    class="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4"
     @click.self="emit('dismiss')"
   >
     <section
       :aria-labelledby="titleId"
       aria-modal="true"
-      class="w-full max-w-md rounded-lg bg-white p-6 text-slate-950 shadow-xl"
+      class="w-full max-w-md rounded-lg bg-surface p-6 text-on-surface shadow-xl"
       role="dialog"
     >
       <h2
@@ -20,13 +20,13 @@
       <p class="mt-3">{{ message }}</p>
       <p
         v-if="reference"
-        class="mt-2 text-sm text-slate-600"
+        class="mt-2 text-sm text-muted"
       >
         {{ reference }}
       </p>
       <button
         ref="closeButtonElement"
-        class="mt-6 rounded-md bg-slate-900 px-4 py-2 font-medium text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+        class="mt-6 rounded-md bg-action px-4 py-2 font-medium text-on-action focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
         type="button"
         @click="emit('dismiss')"
       >
@@ -37,7 +37,7 @@
 
   <section
     v-else
-    class="fixed right-4 bottom-4 z-50 max-w-sm rounded-lg bg-slate-900 p-4 text-white shadow-xl"
+    class="fixed right-4 bottom-4 z-50 max-w-sm rounded-lg bg-action p-4 text-on-action shadow-xl"
     role="alert"
   >
     <div class="flex items-start gap-4">
@@ -46,14 +46,14 @@
         <p class="mt-1 text-sm">{{ message }}</p>
         <p
           v-if="reference"
-          class="mt-1 text-xs text-slate-300"
+          class="mt-1 text-xs opacity-75"
         >
           {{ reference }}
         </p>
       </div>
       <button
         :aria-label="closeLabel"
-        class="rounded px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+        class="rounded px-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-on-action"
         type="button"
         @click="emit('dismiss')"
       >

@@ -16,9 +16,6 @@ type ErrorMessageKey =
 
 const messageKeyByCode: Partial<Record<string, ErrorMessageKey>> = {
   INTERNAL_ERROR: 'error.messages.server',
-  INVALID_INPUT: 'error.messages.validation',
-  REQUEST_ERROR: 'error.messages.request',
-  STATE_CONFLICT: 'error.messages.conflict',
   UPSTREAM_ERROR: 'error.messages.unavailable',
 };
 

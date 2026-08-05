@@ -30,12 +30,13 @@ describe('resolveErrorTitleKey', () => {
 });
 
 describe('resolveErrorMessageKey', () => {
-  it('prefers stable application error codes', () => {
-    expect(resolveErrorMessageKey('STATE_CONFLICT', 500)).toBe('error.messages.conflict');
+  it('prefers stable server error codes', () => {
     expect(resolveErrorMessageKey('UPSTREAM_ERROR', 500)).toBe('error.messages.unavailable');
   });
 
-  it('falls back to status-based translation keys for domain codes', () => {
+  it('uses the status for generic request and domain error codes', () => {
+    expect(resolveErrorMessageKey('REQUEST_ERROR', 401)).toBe('error.messages.authentication');
+    expect(resolveErrorMessageKey('REQUEST_ERROR', 429)).toBe('error.messages.rateLimit');
     expect(resolveErrorMessageKey('ARTICLE_NOT_FOUND', 404)).toBe('error.messages.notFound');
     expect(resolveErrorMessageKey('UNKNOWN_ERROR', 500)).toBe('error.messages.server');
   });
