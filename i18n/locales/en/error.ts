@@ -1,6 +1,17 @@
 export default {
   title: 'Something went wrong',
   message: 'The application could not complete your request.',
+  messages: {
+    authentication: 'Authentication is required.',
+    conflict: 'The request conflicts with the current state.',
+    forbidden: 'You do not have permission to perform this action.',
+    notFound: 'The requested resource was not found.',
+    rateLimit: 'Too many requests. Please try again later.',
+    request: 'The request could not be completed.',
+    server: 'The application could not complete the request.',
+    unavailable: 'A required service is temporarily unavailable.',
+    validation: 'Please check the information and try again.',
+  },
   requestId: 'Reference: {requestId}',
   returnHome: 'Return home',
   titles: {

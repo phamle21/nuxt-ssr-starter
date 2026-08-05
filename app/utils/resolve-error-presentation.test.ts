@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { AppApiError } from './normalize-api-error';
-import { resolveErrorMode, resolveErrorTitleKey } from './resolve-error-presentation';
+import { resolveErrorMessageKey, resolveErrorMode, resolveErrorTitleKey } from './resolve-error-presentation';
 
 function createError(statusCode: number) {
   return new AppApiError(statusCode, {
@@ -26,5 +26,17 @@ describe('resolveErrorTitleKey', () => {
     expect(resolveErrorTitleKey(401)).toBe('error.titles.authentication');
     expect(resolveErrorTitleKey(429)).toBe('error.titles.rateLimit');
     expect(resolveErrorTitleKey(503)).toBe('error.titles.unavailable');
+  });
+});
+
+describe('resolveErrorMessageKey', () => {
+  it('prefers stable application error codes', () => {
+    expect(resolveErrorMessageKey('STATE_CONFLICT', 500)).toBe('error.messages.conflict');
+    expect(resolveErrorMessageKey('UPSTREAM_ERROR', 500)).toBe('error.messages.unavailable');
+  });
+
+  it('falls back to status-based translation keys for domain codes', () => {
+    expect(resolveErrorMessageKey('ARTICLE_NOT_FOUND', 404)).toBe('error.messages.notFound');
+    expect(resolveErrorMessageKey('UNKNOWN_ERROR', 500)).toBe('error.messages.server');
   });
 });

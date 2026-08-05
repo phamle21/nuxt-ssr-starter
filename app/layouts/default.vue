@@ -4,7 +4,7 @@
   <AppErrorPresenter
     v-if="presentation"
     :close-label="$t('common.actions.close')"
-    :message="presentation.error.message"
+    :message="$t(resolveErrorMessageKey(presentation.error.code, presentation.statusCode))"
     :mode="presentation.mode"
     :reference="reference"
     :title="$t(resolveErrorTitleKey(presentation.statusCode))"
@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { resolveErrorTitleKey } from '../utils/resolve-error-presentation';
+import { resolveErrorMessageKey, resolveErrorTitleKey } from '../utils/resolve-error-presentation';
 
 const errorPresentation = useErrorPresentationStore();
 const { current: presentation } = storeToRefs(errorPresentation);

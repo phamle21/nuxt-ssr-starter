@@ -28,7 +28,7 @@ domain hoặc backend cụ thể.
 Tên folder theo domain là **ví dụ** — thay bằng domain thật của từng dự án; biên và vai trò giữ nguyên.
 
 ```text
-src/
+repository root/
 ├── app/                                 # chỉ code browser-safe; không import server
 │   ├── app.vue                          # root: NuxtLayout + NuxtPage
 │   ├── error.vue                        # trang lỗi cấp app

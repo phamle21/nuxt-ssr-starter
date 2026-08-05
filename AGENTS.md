@@ -3,13 +3,12 @@
 ## Purpose
 
 This file is the canonical entry point for AI coding agents (Codex, Claude, and others) working in this
-Nuxt application. All commands assume the current directory is `src/`.
+Nuxt application. All commands assume the current directory is the repository root.
 
 Detailed constraints live in `.ai/rules/` and procedures in `.ai/skills/`. This file orients and
 routes; it does not restate rule content. When guidance overlaps, the linked rule is canonical.
 
-Docker setup, service addresses, and startup commands live in the repository-level
-[README.md](../README.md).
+Setup and startup commands live in [README.md](./README.md).
 
 ## Project Baseline
 

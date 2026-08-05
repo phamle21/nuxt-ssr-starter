@@ -39,4 +39,13 @@ describe('redactLogValue', () => {
     });
     expect(() => JSON.stringify(redacted)).not.toThrow();
   });
+
+  it('preserves repeated references that are not circular', () => {
+    const shared = { status: 'available' };
+
+    expect(redactLogValue({ primary: shared, fallback: shared })).toEqual({
+      primary: { status: 'available' },
+      fallback: { status: 'available' },
+    });
+  });
 });

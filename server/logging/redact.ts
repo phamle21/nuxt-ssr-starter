@@ -73,25 +73,29 @@ export function redactLogValue(value: unknown, depth = 0, seen = new WeakSet<obj
 
   seen.add(value);
 
-  if (value instanceof Date) {
-    return value.toISOString();
-  }
+  try {
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
 
-  if (value instanceof Error) {
-    return redactObject(
-      {
-        name: value.name,
-        message: value.message,
-        stack: value.stack,
-      },
-      depth,
-      seen,
-    );
-  }
+    if (value instanceof Error) {
+      return redactObject(
+        {
+          name: value.name,
+          message: value.message,
+          stack: value.stack,
+        },
+        depth,
+        seen,
+      );
+    }
 
-  if (Array.isArray(value)) {
-    return value.slice(0, maxArrayItems).map((entry) => redactLogValue(entry, depth + 1, seen));
-  }
+    if (Array.isArray(value)) {
+      return value.slice(0, maxArrayItems).map((entry) => redactLogValue(entry, depth + 1, seen));
+    }
 
-  return redactObject(value as Record<string, unknown>, depth, seen);
+    return redactObject(value as Record<string, unknown>, depth, seen);
+  } finally {
+    seen.delete(value);
+  }
 }

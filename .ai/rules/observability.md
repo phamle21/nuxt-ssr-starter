@@ -37,7 +37,8 @@ runtime; only runtime exceptions flow through this pipeline.
   `method`, `path`, `source` (`server` | `client`).
 - Correlate with `requestId` (set by `server/middleware/request-id.ts`).
 - Redaction is mandatory: never log tokens, passwords, `authorization`/`cookie` headers, session ids,
-  payment data, or personal data. Extend the redact list in `logger.ts`; never bypass it.
+  payment data, or personal data. Extend the redact list in `server/logging/redact.ts`; never bypass
+  it.
 - Do not log full external DTOs or responses that may contain sensitive data.
 
 ## Alerting (Slack / Google Chat / future channels)
