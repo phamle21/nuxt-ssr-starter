@@ -1,197 +1,212 @@
-# Kiến trúc Frontend (Nuxt 4 SSR base)
+# Frontend Architecture (Nuxt 4 SSR Base)
 
-## Phạm vi
+## Scope
 
-Tài liệu mô tả **cấu trúc ứng dụng Nuxt cơ bản, tái dùng được cho nhiều dự án**. Trọng tâm là cách tổ
-chức `app/` và các biên (`app / server / shared`), quy ước và luồng dữ liệu — **không** gắn với
-domain hoặc backend cụ thể.
+This document describes a **basic Nuxt application structure reusable across multiple projects**. It
+focuses on organizing `app/` and the `app / server / shared` boundaries, conventions, and data flows
+without coupling the starter to a specific domain or backend.
 
-- Domain được quyết định ở từng dự án; khi có, chỉ thêm folder theo domain, không đổi biên.
-- Backend/provider được cô lập sau `server/integrations/<provider>/`. Tài liệu này cố ý không đi sâu
-  backend — app không phụ thuộc trực tiếp provider nào.
-- Khi bật i18n, dùng `@nuxtjs/i18n`; English là locale mặc định và URL dùng
-  `prefix_except_default`. Quy ước message nằm duy nhất ở [.ai/rules/i18n.md](./.ai/rules/i18n.md).
+- Each project defines its own domains. Add domain folders when needed without changing the layer
+  boundaries.
+- Backends and providers are isolated behind `server/integrations/<provider>/`. This document
+  intentionally avoids backend-specific details so the app does not depend directly on a provider.
+- When i18n is enabled, use `@nuxtjs/i18n`; English is the default locale and URLs use
+  `prefix_except_default`. Message conventions are defined only in
+  [.ai/rules/i18n.md](./.ai/rules/i18n.md).
 
-## Nguyên tắc nền
+## Core Principles
 
-- **Biên `app / server / shared`** theo chuẩn Nuxt 4.
-- **BFF (Backend for Frontend):** browser không gọi thẳng backend. `app/` gọi Nitro (`server/api/`),
-  Nitro mới gọi backend. Nhờ đó FE độc lập với backend và giữ secret/token ở server.
-- **Chiều phụ thuộc một chiều:** áp dụng duy nhất theo
-  [.ai/rules/architecture.md](./.ai/rules/architecture.md), không định nghĩa lại theo từng feature.
-- **Contract là biên giữa server và app:** dữ liệu backend được map sang `shared/contracts` trước khi
-  ra tới `app/`. Đổi backend chỉ ảnh hưởng `server/integrations/<provider>/`.
-- Chỉ tạo directory khi có code thật dùng nó.
+- **`app / server / shared` boundaries** follow Nuxt 4 conventions.
+- **BFF (Backend for Frontend):** the browser does not call a backend directly. `app/` calls Nitro
+  (`server/api/`), and Nitro calls the backend. This keeps the frontend independent from the backend
+  and keeps secrets and tokens on the server.
+- **One-way dependencies:** follow [.ai/rules/architecture.md](./.ai/rules/architecture.md). Do not
+  redefine dependency direction per feature.
+- **Contracts form the server-app boundary:** backend data is mapped to `shared/contracts` before it
+  reaches `app/`. Replacing a backend should affect only `server/integrations/<provider>/`.
+- Create a directory only when real code uses it.
 
-## Cấu trúc thư mục
+## Directory Structure
 
-Tên folder theo domain là **ví dụ** — thay bằng domain thật của từng dự án; biên và vai trò giữ nguyên.
+Domain folder names below are **examples**. Replace them with each project's actual domains while
+preserving the boundaries and responsibilities.
 
 ```text
 repository root/
-├── app/                                 # chỉ code browser-safe; không import server
+├── app/                                 # browser-safe code only; never imports server code
 │   ├── app.vue                          # root: NuxtLayout + NuxtPage
-│   ├── error.vue                        # trang lỗi cấp app
+│   ├── error.vue                        # application-level error page
 │   ├── assets/
 │   │   └── style/
-│   │       ├── tailwind.css             # entry Tailwind + @theme
-│   │       └── tokens.css               # design tokens (màu, spacing, radius) — thêm khi cần
-│   ├── components/                      # component tái dùng, auto-import theo tên
-│   │   ├── ui/                          # primitive không nghiệp vụ: Button, Input, Badge, Modal...
+│   │       ├── tailwind.css             # Tailwind + @theme entry point
+│   │       └── tokens.css               # design tokens (color, spacing, radius); add as needed
+│   ├── components/                      # reusable components, auto-imported by name
+│   │   ├── ui/                          # domain-free primitives: Button, Input, Badge, Modal...
 │   │   ├── layout/                      # Header, Nav, Footer, Drawer
-│   │   └── <feature>/                   # component theo domain (ví dụ, tùy dự án)
-│   ├── composables/                     # logic có state tái dùng; gọi Nitro qua $fetch/useFetch
-│   │   ├── useApi.ts                    # wrapper gọi server/api (tùy chọn)
-│   │   └── use<Feature>.ts              # theo domain
-│   ├── stores/                          # Pinia: chỉ state dùng chung nhiều view
+│   │   └── <feature>/                   # domain components (optional example)
+│   ├── composables/                     # reusable stateful logic; calls Nitro via $fetch/useFetch
+│   │   ├── useApi.ts                    # optional server/api wrapper
+│   │   └── use<Feature>.ts              # domain-specific composable
+│   ├── stores/                          # Pinia: state shared by multiple views only
 │   │   └── <feature>.ts
 │   ├── layouts/
-│   │   └── default.vue                  # thêm layout khác khi cần (public, authenticated...)
-│   ├── middleware/                      # route middleware (auth, guest...) — thêm khi cần
-│   ├── plugins/                         # app/browser integration — thêm khi cần
-│   ├── pages/                           # file-based routing = view + điều phối data + SEO meta
+│   │   └── default.vue                  # add layouts as needed (public, authenticated...)
+│   ├── middleware/                      # route middleware (auth, guest...); add as needed
+│   ├── plugins/                         # app/browser integrations; add as needed
+│   ├── pages/                           # file-based routing: views, data orchestration, SEO metadata
 │   │   ├── index.vue
-│   │   └── <route>/[param].vue          # route động (ví dụ)
-│   └── utils/                           # pure helper browser-safe (format, class merge...)
-├── server/                              # Nitro; sở hữu transport tới backend + secret
-│   ├── api/                             # HTTP endpoint: parse input, set status, gọi service
-│   │   └── <resource>/                  # mỗi endpoint = 1 use case (index.get.ts, [id].get.ts...)
-│   ├── exceptions/                      # AppError + normalize lỗi về public contract an toàn
-│   ├── logging/                         # structured logger, redaction, rate limit
-│   ├── notifications/                   # notify orchestration + adapter theo channel
-│   ├── routes/                          # non-API route (sitemap.xml, robots.txt...) — thêm khi cần
-│   ├── services/                        # orchestration use case; tách khỏi HTTP để dễ test
+│   │   └── <route>/[param].vue          # dynamic route example
+│   └── utils/                           # browser-safe pure helpers (formatting, class merging...)
+├── server/                              # Nitro; owns backend transport and secrets
+│   ├── api/                             # HTTP endpoints: parse input, set status, call services
+│   │   └── <resource>/                  # one endpoint per use case (index.get.ts, [id].get.ts...)
+│   ├── exceptions/                      # AppError and safe public-error normalization
+│   ├── logging/                         # structured logging, redaction, rate limiting
+│   ├── notifications/                   # notification orchestration and channel adapters
+│   ├── routes/                          # non-API routes (sitemap.xml, robots.txt...); add as needed
+│   ├── services/                        # use-case orchestration, isolated from HTTP for testability
 │   │   └── <domain>/
 │   ├── integrations/
-│   │   └── <provider>/                  # nơi DUY NHẤT biết shape/transport backend
-│   │       ├── client.ts                # transport: endpoint, auth header, timeout, xử lý lỗi
-│   │       ├── dto/                      # kiểu dữ liệu thô đúng theo backend
-│   │       └── mappers/                  # DTO thô → shared/contracts (ổn định)
-│   └── utils/                            # server-only; auto-import (request context, safe error...)
-├── shared/                              # app và server đều import; không import ngược
-│   ├── contracts/                       # shape dữ liệu qua biên Nitro (server↔app, serializable)
-│   ├── constants/                       # hằng dùng chung
-│   ├── logging/                         # contract error report dùng chung app↔server
-│   └── types/                           # kiểu thuần dùng chung (enum, union nhỏ) — không phải payload API
+│   │   └── <provider>/                  # the only layer aware of backend shape and transport
+│   │       ├── client.ts                # endpoint, auth headers, timeout, and transport errors
+│   │       ├── dto/                      # raw types matching the backend
+│   │       └── mappers/                  # raw DTOs → stable shared contracts
+│   └── utils/                            # server-only auto-imports (request context, safe errors...)
+├── shared/                              # imported by app and server; never imports from them
+│   ├── contracts/                       # serializable data crossing the Nitro boundary
+│   ├── constants/                       # shared constants
+│   ├── logging/                         # error-report contracts shared by app and server
+│   └── types/                           # shared pure types; not API payloads
 ├── i18n/
 │   └── locales/
 │       └── en/                          # source of truth; namespace files + index.ts aggregator
-├── tests/                               # tooling adapter; mirror path của app/server/shared
+├── tests/                               # tooling adapter; mirrors app/server/shared paths
 │   ├── unit/
-│   ├── integration/                    # chỉ thêm khi có integration test thật
+│   ├── integration/                     # add only when real integration tests exist
 │   └── setup.ts
-└── stories/                             # tooling adapter; mirror path của app/components
+└── stories/                             # tooling adapter; mirrors app/components paths
 ```
 
-## Quy ước
+## Conventions
 
-- **`assets/style/` (số ít)** khớp baseline hiện có (`app/assets/style/tailwind.css` và path trong
-  `nuxt.config.ts`).
-- **Styling:** Tailwind là chính; custom dùng SCSS scoped cho ngoại lệ, tokens qua `@theme`. Quy ước
-  đầy đủ ở [.ai/rules/styling.md](./.ai/rules/styling.md).
-- **Phạm vi auto-import:** Nitro chỉ auto-import từ `server/utils/`; Nuxt chỉ auto-import
-  `shared/utils/**` và `shared/types/**`. `server/{services,integrations}/`, `shared/contracts/` và
-  `shared/constants/` **import tường minh** — có chủ đích.
-- **Import:** dùng relative import trong cùng module/directory; dùng `@/` khi đi qua folder trong
-  `app/`, và `~~/` khi import từ repo root (`server/`, `shared/`). Không dùng chuỗi `../../` để vượt
-  layer.
-- **Tooling tách rời:** test ở `tests/<kind>/<source-path>` và story ở `stories/<component-source-path>`.
-  `tests/` và `stories/` được import runtime source; runtime source không bao giờ import ngược tooling.
-- **`contracts` vs `types`:** `shared/contracts/` = shape dữ liệu đi qua biên Nitro (serializable,
-  phiên bản hóa được). `shared/types/` = kiểu thuần dùng chung (enum, union, literal nhỏ), không phải
-  payload API.
-- **Naming:** `PascalCase` cho component & type; `camelCase` cho biến/hàm/composable; composable prefix
-  `use`; boolean dạng predicate (`isLoading`, `hasAccess`). Chi tiết ở `.ai/rules/coding-standards.md`.
+- **`assets/style/` (singular)** matches the current baseline (`app/assets/style/tailwind.css` and
+  the path in `nuxt.config.ts`).
+- **Styling:** Tailwind is primary. Use scoped SCSS only for exceptional custom styles and expose
+  tokens through `@theme`. See [.ai/rules/styling.md](./.ai/rules/styling.md).
+- **Auto-import scope:** Nitro auto-imports only from `server/utils/`; Nuxt auto-imports only
+  `shared/utils/**` and `shared/types/**`. Imports from `server/{services,integrations}/`,
+  `shared/contracts/`, and `shared/constants/` are intentionally explicit.
+- **Imports:** use relative imports within the same module or directory, `@/` across folders in
+  `app/`, and `~~/` from the repository root (`server/`, `shared/`). Do not use `../../` chains to
+  cross layers.
+- **Detached tooling:** tests live at `tests/<kind>/<source-path>` and stories at
+  `stories/<component-source-path>`. Tests and stories may import runtime source; runtime source must
+  never import tooling.
+- **`contracts` vs `types`:** `shared/contracts/` contains serializable, versionable data shapes that
+  cross the Nitro boundary. `shared/types/` contains small shared types such as enums, unions, and
+  literals, not API payloads.
+- **Naming:** use `PascalCase` for components and types, `camelCase` for variables, functions, and
+  composables, the `use` prefix for composables, and predicate names for booleans (`isLoading`,
+  `hasAccess`). See `.ai/rules/coding-standards.md`.
 
-## Trách nhiệm từng layer
+## Layer Responsibilities
 
-| Layer | Làm gì | Không làm gì |
+| Layer | Responsibilities | Exclusions |
 |---|---|---|
-| `app/pages` | route/query params, chọn layout, điều phối SSR data, metadata, chọn view theo trạng thái | không chứa transport/DTO/credential |
-| `app/components` | render UI, phát event; hiểu contract | không hiểu DTO backend; UI primitive không chứa business logic |
-| `app/composables` | API ổn định để page/component gọi Nitro; quản lý async-data key, refresh, view state | không thành service layer thứ hai ở client |
-| `app/stores` | state dùng chung nhiều view (drawer, session đã lọc nhạy cảm) | không copy toàn bộ SSR data vào Pinia |
-| `server/api` | parse/validate input, set HTTP status, gọi service, map lỗi an toàn | không chứa orchestration phức tạp |
-| `server/services` | điều phối use case, gộp nhiều lời gọi, chứa business rule | hạn chế phụ thuộc HTTP object |
-| `server/integrations/<provider>` | auth, timeout, transport, DTO thô, mapper → contract | không đưa raw provider error ra app |
-| `shared/contracts` | shape serializable dùng chung app↔server | không copy toàn bộ backend schema |
+| `app/pages` | Read route/query parameters, select layouts, orchestrate SSR data and metadata, and select state-specific views | Transport, DTOs, and credentials |
+| `app/components` | Render UI and emit events using shared contracts | Backend DTO knowledge; business logic in UI primitives |
+| `app/composables` | Provide a stable API for pages/components to call Nitro and manage async-data keys, refreshes, and view state | A second client-side service layer |
+| `app/stores` | Hold state shared by multiple views, such as drawers or sanitized sessions | Copying all SSR data into Pinia |
+| `server/api` | Parse and validate input, set HTTP status, call services, and map errors safely | Complex orchestration |
+| `server/services` | Orchestrate use cases, combine calls, and enforce business rules | Unnecessary dependency on HTTP objects |
+| `server/integrations/<provider>` | Handle auth, timeouts, transport, raw DTOs, and mapping to contracts | Exposing raw provider errors to the app |
+| `shared/contracts` | Define serializable shapes shared by app and server | Copying the complete backend schema |
 
-## Luồng dữ liệu
+## Data Flow
 
-### SSR read (render-critical)
+### SSR Read (Render-Critical)
 
 ```text
 page/component
   └─ composable: useFetch('/api/<resource>/:id')      # SSR read
-       └─ server/api/<resource>/[id].get.ts           # parse input, status
-            └─ server/services/<domain>                 # orchestration
-                 └─ integrations/<provider>/client.ts   # transport
-                      └─ integrations/<provider>/mappers # DTO thô → contract
+       └─ server/api/<resource>/[id].get.ts           # parse input, set status
+            └─ server/services/<domain>               # orchestration
+                 └─ integrations/<provider>/client.ts # transport
+                      └─ integrations/<provider>/mappers # raw DTO → contract
        ⇐ shared/contracts → SSR HTML + hydration payload
-  ⇐ browser hydrate, không gọi lại request trùng
+  ⇐ browser hydration without a duplicate request
 ```
 
-### Event-driven mutation
+### Event-Driven Mutation
 
 ```text
 component (emit)
   └─ useAppRequest action → $api('/api/<resource>', { method: 'POST' })
        └─ server/api → service → integration (mutation) → mapper
-       ⇐ contract → cập nhật store → refresh UI liên quan
+       ⇐ contract → update store → refresh related UI
 ```
 
-Read render-critical dùng `useAppFetch`; mutation dùng `useAppRequest`. Hai composable cung cấp
-application API boundary thống nhất và dùng chung error contract. Feature code không gọi trực tiếp
-`$fetch`/`useFetch` cho application API.
+Use `useAppFetch` for render-critical reads and `useAppRequest` for mutations. These composables
+provide a consistent application API boundary and share the same error contract. Feature code does
+not call `$fetch` or `useFetch` directly for application APIs.
 
-## Quy tắc SSR & hydration
+## SSR and Hydration Rules
 
-- `useFetch` cho read thông thường; `useAsyncData` khi cần orchestration tùy biến.
-- Async-data key ổn định; handler không side effect, luôn trả dữ liệu serializable.
-- Giới hạn hydration payload về đúng field trang cần.
-- Không lưu request-specific mutable state ở module scope (rò rỉ giữa SSR request).
-- Browser API chỉ dùng trong client boundary.
-- Xử lý rõ 4 trạng thái: pending, empty, error, success.
+- Use `useFetch` for standard reads and `useAsyncData` for custom orchestration.
+- Keep async-data keys stable and handlers free of side effects; always return serializable data.
+- Limit the hydration payload to the fields required by the page.
+- Do not store request-specific mutable state at module scope; it can leak between SSR requests.
+- Use browser APIs only inside client boundaries.
+- Handle all four states explicitly: pending, empty, error, and success.
 
-## SEO (khi cần)
+## SEO (When Needed)
 
-- `useSeoMeta` cho title/description/social; `useHead` cho canonical/alternate.
-- Nội dung quan trọng phải nằm trong server-rendered HTML.
-- JSON-LD (nếu có) lấy từ cùng contract đang hiển thị; chỉ thêm field khi dữ liệu có thật.
-- `sitemap.xml` / `robots.txt` đặt trong `server/routes/`, thêm khi chốt domain + indexing.
-- Locale alternate chỉ thêm khi có từ hai locale và nội dung tương ứng đã sẵn sàng.
+- Use `useSeoMeta` for titles, descriptions, and social metadata; use `useHead` for canonical and
+  alternate links.
+- Render important content in server-generated HTML.
+- Derive JSON-LD, when present, from the same displayed contract and add only fields backed by real
+  data.
+- Place `sitemap.xml` and `robots.txt` in `server/routes/` after the domain and indexing policy are
+  defined.
+- Add locale alternates only when at least two locales and their corresponding content are ready.
 
-## Error strategy
+## Error Strategy
 
-Nitro boundary dùng `defineApiHandler` để normalize lỗi về `AppError` và trả `ApiErrorData` ổn định,
-an toàn — không rò raw provider error:
+The Nitro boundary uses `defineApiHandler` to normalize errors into `AppError` and return stable,
+safe `ApiErrorData` without leaking raw provider errors:
 
 ```text
-400  input không hợp lệ
-401  chưa đăng nhập / session hết hạn
-403  không được phép
-404  không tìm thấy resource
-409  xung đột trạng thái
-422  backend từ chối business input hợp lệ về cấu trúc
-502  backend trả response không hợp lệ
+400  invalid input
+401  unauthenticated or expired session
+403  forbidden
+404  resource not found
+409  state conflict
+422  backend rejected structurally valid business input
+502  backend returned an invalid response
 504  backend timeout
 ```
 
-`ApiErrorData` chứa stable `code`, public `message`, `requestId`, và khi phù hợp có `fields` hoặc
-`retryAfter`. App resolve presentation riêng theo context: `inline`, `toast`, `dialog`, `page`, hoặc
-`silent`. Server error policy và UI presentation policy là hai trách nhiệm độc lập.
+`ApiErrorData` contains a stable `code`, public `message`, and `requestId`, plus `fields` or
+`retryAfter` when appropriate. The app resolves presentation separately by context: `inline`,
+`toast`, `dialog`, `page`, or `silent`. Server error policy and UI presentation policy remain
+independent responsibilities.
 
-Log đủ context để định vị lỗi, nhưng không log credential, token, session id hay personal data. Chuẩn
-xử lý lỗi / log / alert cụ thể ở [.ai/rules/observability.md](./.ai/rules/observability.md).
+Log enough context to diagnose failures without logging credentials, tokens, session IDs, or
+personal data. See [.ai/rules/observability.md](./.ai/rules/observability.md) for error handling,
+logging, and alerting rules.
 
-## Bảo mật (baseline)
+## Security Baseline
 
-- Secret/token chỉ ở private runtime config + cookie HttpOnly phía server; không vào Pinia/localStorage.
-- Không mở proxy tổng quát cho browser gọi backend tùy ý — mỗi endpoint = 1 use case server kiểm soát.
-- Validate input không tin cậy ở `server/api`; giữ SSR request isolation.
-- Không thêm dependency (auth/validation/cache lib...) khi chưa có yêu cầu và chưa được duyệt.
+- Keep secrets and tokens in private runtime config or server-side HttpOnly cookies, never in Pinia
+  or localStorage.
+- Do not expose a generic proxy that lets the browser call arbitrary backend endpoints. Each endpoint
+  represents one server-controlled use case.
+- Validate untrusted input in `server/api` and preserve SSR request isolation.
+- Do not add auth, validation, caching, or other dependencies without a requirement and explicit
+  approval.
 
-## Ghi chú khi áp dụng
+## Adoption Notes
 
-- Tạo `server/integrations/<provider>/` chỉ khi dự án đã chọn provider và có code tích hợp thật.
-- Domain, cache policy và request context phải được chốt theo yêu cầu của từng dự án/tính năng.
+- Create `server/integrations/<provider>/` only after a project selects a provider and has a real
+  integration.
+- Define domains, cache policy, and request context from the requirements of each project or feature.
