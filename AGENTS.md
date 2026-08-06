@@ -67,6 +67,7 @@ never place tooling files in or import tooling from `app/`, `server/`, or `share
 | Add or update translations or a locale | `.ai/skills/implement-i18n/SKILL.md` |
 | Add or update tests | `.ai/skills/write-vitest-tests/SKILL.md` |
 | Add metadata, structured data, or search discoverability | `.ai/skills/implement-seo/SKILL.md` |
+| Add or update an error notification channel | `.ai/skills/add-error-notification-channel/SKILL.md` |
 | Review code, a working tree, or a proposed change | `.ai/skills/review-nuxt-code/SKILL.md` |
 
 For assets follow `.ai/rules/assets.md`. For custom CSS/SCSS follow `.ai/rules/styling.md`. Load

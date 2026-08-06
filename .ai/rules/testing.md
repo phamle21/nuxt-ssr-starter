@@ -12,4 +12,3 @@
   `tests/unit/app/foo.test.ts` and `server/foo.ts` maps to `tests/unit/server/foo.test.ts`.
 - Import app source with `@/` and repository-root source with `~~/`; runtime source must never import
   tests, fixtures, mocks, or stories.
-- Run targeted tests first, then `yarn verify`.

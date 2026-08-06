@@ -136,7 +136,10 @@ The starter includes:
 - optional Slack and Google Chat notifications with severity filtering and deduplication;
 - inline, toast, dialog, page, and silent application error modes.
 
-Rate limiting and notification deduplication are in-memory and per application instance. Use shared storage when a deployment requires consistent behavior across multiple instances or serverless invocations.
+Rate limiting and notification deduplication are in-memory and per application instance. The rate
+limiter evicts its oldest entry at capacity, so high client-key cardinality can reduce accuracy. Use
+shared storage when a deployment requires consistent behavior across multiple instances or serverless
+invocations.
 
 ## Internationalization
 
