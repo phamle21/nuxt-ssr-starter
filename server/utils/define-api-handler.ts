@@ -1,5 +1,5 @@
 import { defineEventHandler, setResponseHeader, type H3Event } from 'h3';
-import { normalizeError, toSafeH3Error } from '../exceptions/normalize-error';
+import { normalizeError, toSafeH3Error } from '~~/server/exceptions/normalize-error';
 
 type ApiHandler<T> = (event: H3Event) => Promise<T> | T;
 

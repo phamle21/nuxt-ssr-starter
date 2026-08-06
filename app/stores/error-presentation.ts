@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import type { ApiErrorData } from '../../shared/contracts/api-error';
-import type { GlobalErrorMode } from '../utils/resolve-error-presentation';
+import type { ApiErrorData } from '~~/shared/contracts/api-error';
+import type { GlobalErrorMode } from '@/utils/resolve-error-presentation';
 
 export interface ErrorPresentation {
   statusCode: number;

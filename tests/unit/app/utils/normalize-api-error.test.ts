@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { AppApiError, normalizeApiError } from './normalize-api-error';
+import { AppApiError, normalizeApiError } from '@/utils/normalize-api-error';
 
 describe('normalizeApiError', () => {
   it('reads the safe H3 error contract', () => {

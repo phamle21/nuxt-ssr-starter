@@ -11,7 +11,7 @@ A production-oriented Nuxt 4 starter for server-rendered applications. It provid
 - Tailwind CSS 4, with SCSS reserved for exceptional custom styling
 - `@nuxtjs/i18n`
 - Vitest and Vue Test Utils
-- Storybook with accessibility checks
+- Storybook with the accessibility addon
 - Oxlint and Oxfmt
 
 Exact versions are declared in [`package.json`](./package.json).
@@ -48,8 +48,11 @@ The development server is available at `http://localhost:3000` by default.
 | `yarn type-check` | Generate Nuxt types and run Vue TypeScript checks |
 | `yarn lint` | Run Oxlint |
 | `yarn format:check` | Check formatting with Oxfmt |
+| `yarn verify:core` | Check and build the runtime application without test or Storybook tooling |
+| `yarn verify:test` | Run the detached unit and integration test suite |
+| `yarn verify:storybook` | Build the detached component stories |
 | `yarn verify:quick` | Run formatting, linting, type-checking, and unit tests |
-| `yarn verify` | Run all quick checks, the production build, and the Storybook build |
+| `yarn verify` | Run application, test, and Storybook verification |
 
 Use `yarn verify:quick` during development and `yarn verify` before handing off a production change.
 
@@ -73,9 +76,16 @@ server/
   notifications/            Error notification orchestration and channels
   services/                 Domain use-case orchestration
 shared/                     Serializable contracts and shared types
+tests/                      Tests mirroring app, server, and shared source paths
+stories/                    Stories mirroring app component source paths
 ```
 
 Directories for domains, services, or integrations should be added only when real application code needs them. See [`ARCHITECTURE.md`](./ARCHITECTURE.md) for layer responsibilities, dependency rules, and data flows.
+
+Tests and stories are tooling adapters, not runtime layers. For a source file such as
+`app/components/ui/AppButton.vue`, use `tests/unit/app/components/ui/AppButton.test.ts` and
+`stories/app/components/ui/AppButton.stories.ts`. Tooling imports runtime source through `@` for
+`app/` and `~~` for the repository root; runtime source must never import from `tests/` or `stories/`.
 
 ## Application data flow
 

@@ -20,8 +20,11 @@
     "type-check": "nuxt prepare && vue-tsc --build",
     "analyze": "npx nuxi analyze",
     "project-info": "npx nuxi info",
-    "verify:quick": "yarn format:check && yarn lint && yarn type-check && yarn test:unit",
-    "verify": "yarn verify:quick && yarn build && yarn build-storybook",
+    "verify:core": "yarn format:check && yarn lint && yarn type-check && yarn build",
+    "verify:test": "yarn test:unit",
+    "verify:storybook": "yarn build-storybook",
+    "verify:quick": "yarn format:check && yarn lint && yarn type-check && yarn verify:test",
+    "verify": "yarn verify:core && yarn verify:test && yarn verify:storybook",
     "postinstall": "nuxt prepare",
     "prepare": "husky"
   },

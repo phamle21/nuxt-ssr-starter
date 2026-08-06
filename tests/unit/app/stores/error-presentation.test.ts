@@ -1,6 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { useErrorPresentationStore } from './error-presentation';
+import { useErrorPresentationStore } from '@/stores/error-presentation';
 
 describe('useErrorPresentationStore', () => {
   beforeEach(() => {

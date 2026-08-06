@@ -1,4 +1,4 @@
-import { normalizeApiError } from '../utils/normalize-api-error';
+import { normalizeApiError } from '@/utils/normalize-api-error';
 
 export const useAppFetch = createUseFetch({
   headers: {

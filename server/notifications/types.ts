@@ -1,4 +1,4 @@
-import type { Severity } from '../logging/types';
+import type { Severity } from '~~/server/logging/types';
 
 export interface ErrorNotification {
   severity: Severity;

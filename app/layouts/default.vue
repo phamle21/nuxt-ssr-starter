@@ -13,7 +13,7 @@
 </template>
 
 <script setup lang="ts">
-import { resolveErrorMessageKey, resolveErrorTitleKey } from '../utils/resolve-error-presentation';
+import { resolveErrorMessageKey, resolveErrorTitleKey } from '@/utils/resolve-error-presentation';
 
 const errorPresentation = useErrorPresentationStore();
 const { current: presentation } = storeToRefs(errorPresentation);

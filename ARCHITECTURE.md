@@ -73,9 +73,14 @@ repository root/
 │   ├── constants/                       # hằng dùng chung
 │   ├── logging/                         # contract error report dùng chung app↔server
 │   └── types/                           # kiểu thuần dùng chung (enum, union nhỏ) — không phải payload API
-└── i18n/
-    └── locales/
-        └── en/                          # source of truth; namespace files + index.ts aggregator
+├── i18n/
+│   └── locales/
+│       └── en/                          # source of truth; namespace files + index.ts aggregator
+├── tests/                               # tooling adapter; mirror path của app/server/shared
+│   ├── unit/
+│   ├── integration/                    # chỉ thêm khi có integration test thật
+│   └── setup.ts
+└── stories/                             # tooling adapter; mirror path của app/components
 ```
 
 ## Quy ước
@@ -87,6 +92,11 @@ repository root/
 - **Phạm vi auto-import:** Nitro chỉ auto-import từ `server/utils/`; Nuxt chỉ auto-import
   `shared/utils/**` và `shared/types/**`. `server/{services,integrations}/`, `shared/contracts/` và
   `shared/constants/` **import tường minh** — có chủ đích.
+- **Import:** dùng relative import trong cùng module/directory; dùng `@/` khi đi qua folder trong
+  `app/`, và `~~/` khi import từ repo root (`server/`, `shared/`). Không dùng chuỗi `../../` để vượt
+  layer.
+- **Tooling tách rời:** test ở `tests/<kind>/<source-path>` và story ở `stories/<component-source-path>`.
+  `tests/` và `stories/` được import runtime source; runtime source không bao giờ import ngược tooling.
 - **`contracts` vs `types`:** `shared/contracts/` = shape dữ liệu đi qua biên Nitro (serializable,
   phiên bản hóa được). `shared/types/` = kiểu thuần dùng chung (enum, union, literal nhỏ), không phải
   payload API.

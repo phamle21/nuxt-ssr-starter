@@ -1,4 +1,4 @@
-import { redactLogValue } from './redact';
+import { redactLogValue } from '~~/server/logging/redact';
 
 describe('redactLogValue', () => {
   it('redacts sensitive keys recursively', () => {

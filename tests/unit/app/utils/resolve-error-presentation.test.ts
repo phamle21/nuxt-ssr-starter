@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { AppApiError } from './normalize-api-error';
-import { resolveErrorMessageKey, resolveErrorMode, resolveErrorTitleKey } from './resolve-error-presentation';
+import { AppApiError } from '@/utils/normalize-api-error';
+import { resolveErrorMessageKey, resolveErrorMode, resolveErrorTitleKey } from '@/utils/resolve-error-presentation';
 
 function createError(statusCode: number) {
   return new AppApiError(statusCode, {

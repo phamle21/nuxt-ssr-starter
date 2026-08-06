@@ -1,4 +1,4 @@
-import { formatErrorNotification } from './format-notification';
+import { formatErrorNotification } from '~~/server/notifications/format-notification';
 
 describe('formatErrorNotification', () => {
   it('formats only the safe notification contract', () => {

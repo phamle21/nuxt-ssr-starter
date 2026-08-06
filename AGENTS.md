@@ -51,6 +51,9 @@ The concrete repo structure, layer responsibilities, and data flows live in `ARC
 Canonical dependency constraints live in `.ai/rules/architecture.md` and Nuxt implementation rules
 live in `.ai/rules/nuxt.md`.
 
+Tests and stories are detached tooling adapters. Mirror runtime paths under `tests/` and `stories/`;
+never place tooling files in or import tooling from `app/`, `server/`, or `shared/`.
+
 ## Skill Routing
 
 | Task | Skill |

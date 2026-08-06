@@ -1,5 +1,5 @@
-import { vi } from 'vitest';
 import { config } from '@vue/test-utils';
+import { vi } from 'vitest';
 
 config.global.components = {
   NuxtLink: {

@@ -1,6 +1,6 @@
 import { Readable } from 'node:stream';
-import { AppError } from '../exceptions/app-error';
-import { assertClientErrorReportContentLength, parseClientErrorReport, readLimitedClientErrorReportBody } from './client-error-report';
+import { AppError } from '~~/server/exceptions/app-error';
+import { assertClientErrorReportContentLength, parseClientErrorReport, readLimitedClientErrorReportBody } from '~~/server/logging/client-error-report';
 
 describe('assertClientErrorReportContentLength', () => {
   it('accepts a content length within the payload limit', () => {

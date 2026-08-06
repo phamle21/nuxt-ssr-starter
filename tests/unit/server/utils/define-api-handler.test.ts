@@ -1,6 +1,6 @@
 import { createApp, toWebHandler } from 'h3';
-import { AppError } from '../exceptions/app-error';
-import { defineApiHandler } from './define-api-handler';
+import { AppError } from '~~/server/exceptions/app-error';
+import { defineApiHandler } from '~~/server/utils/define-api-handler';
 
 describe('defineApiHandler', () => {
   it('returns a safe error contract with request and retry metadata', async () => {

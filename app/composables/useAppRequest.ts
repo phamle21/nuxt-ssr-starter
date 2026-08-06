@@ -1,7 +1,7 @@
 import type { FetchRequest } from 'ofetch';
-import type { ApiErrorData } from '../../shared/contracts/api-error';
-import { normalizeApiError } from '../utils/normalize-api-error';
-import { resolveErrorMode, type ErrorMode } from '../utils/resolve-error-presentation';
+import type { ApiErrorData } from '~~/shared/contracts/api-error';
+import { normalizeApiError } from '@/utils/normalize-api-error';
+import { resolveErrorMode, type ErrorMode } from '@/utils/resolve-error-presentation';
 
 type FetchOptions = NonNullable<Parameters<typeof $fetch>[1]>;
 

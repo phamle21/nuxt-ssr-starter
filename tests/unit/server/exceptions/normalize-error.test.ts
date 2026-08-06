@@ -1,5 +1,5 @@
-import { AppError } from './app-error';
-import { normalizeError, toSafeH3Error } from './normalize-error';
+import { AppError } from '~~/server/exceptions/app-error';
+import { normalizeError, toSafeH3Error } from '~~/server/exceptions/normalize-error';
 
 describe('normalizeError', () => {
   it('preserves an AppError contract', () => {

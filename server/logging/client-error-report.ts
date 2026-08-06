@@ -1,5 +1,5 @@
-import { clientErrorReportLimits, type ClientErrorReport } from '../../shared/logging/error-report';
-import { AppError } from '../exceptions/app-error';
+import { clientErrorReportLimits, type ClientErrorReport } from '~~/shared/logging/error-report';
+import { AppError } from '~~/server/exceptions/app-error';
 
 export function assertClientErrorReportContentLength(contentLength: string | undefined, maxPayloadBytes: number): void {
   if (contentLength && /^\d+$/.test(contentLength) && Number(contentLength) > maxPayloadBytes) {

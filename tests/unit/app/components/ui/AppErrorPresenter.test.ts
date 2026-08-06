@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils';
 import { describe, expect, it } from 'vitest';
-import AppErrorPresenter from './AppErrorPresenter.vue';
+import AppErrorPresenter from '@/components/ui/AppErrorPresenter.vue';
 
 describe('AppErrorPresenter', () => {
   const props = {

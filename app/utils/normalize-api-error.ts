@@ -1,4 +1,4 @@
-import type { ApiErrorData, ApiErrorResponse } from '../../shared/contracts/api-error';
+import type { ApiErrorData, ApiErrorResponse } from '~~/shared/contracts/api-error';
 
 const fallbackMessages: Record<number, string> = {
   400: 'The request is invalid.',

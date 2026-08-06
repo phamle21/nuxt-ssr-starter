@@ -1,7 +1,7 @@
 import { getRequestURL } from 'h3';
-import { normalizeError } from '../exceptions/normalize-error';
-import { logger } from '../logging/logger';
-import { notifyError } from '../notifications/notify-error';
+import { normalizeError } from '~~/server/exceptions/normalize-error';
+import { logger } from '~~/server/logging/logger';
+import { notifyError } from '~~/server/notifications/notify-error';
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('error', (error, context) => {

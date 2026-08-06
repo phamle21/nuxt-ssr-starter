@@ -1,4 +1,4 @@
-import { clientErrorReportLimits, type ClientErrorReport } from '../../shared/logging/error-report';
+import { clientErrorReportLimits, type ClientErrorReport } from '~~/shared/logging/error-report';
 
 const recentReports = new Map<string, number>();
 const clientDedupWindowMilliseconds = 5_000;

@@ -1,4 +1,4 @@
-import { notifyErrorWithConfig, type ErrorNotifyConfig } from './notify-error';
+import { notifyErrorWithConfig, type ErrorNotifyConfig } from '~~/server/notifications/notify-error';
 
 const sendSlackNotification = vi.fn(async () => undefined);
 const sendGoogleChatNotification = vi.fn(async () => undefined);

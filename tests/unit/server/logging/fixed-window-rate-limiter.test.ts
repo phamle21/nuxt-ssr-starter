@@ -1,4 +1,4 @@
-import { FixedWindowRateLimiter } from './fixed-window-rate-limiter';
+import { FixedWindowRateLimiter } from '~~/server/logging/fixed-window-rate-limiter';
 
 describe('FixedWindowRateLimiter', () => {
   it('allows requests up to the configured limit', () => {

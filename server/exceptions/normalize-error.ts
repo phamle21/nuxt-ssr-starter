@@ -1,5 +1,5 @@
 import { createError, type H3Error } from 'h3';
-import type { ApiErrorData } from '../../shared/contracts/api-error';
+import type { ApiErrorData } from '~~/shared/contracts/api-error';
 import { AppError } from './app-error';
 
 const publicMessages: Record<number, string> = {

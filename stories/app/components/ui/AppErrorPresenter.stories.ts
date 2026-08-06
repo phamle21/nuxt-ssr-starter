@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/vue3-vite';
-import AppErrorPresenter from './AppErrorPresenter.vue';
+import AppErrorPresenter from '@/components/ui/AppErrorPresenter.vue';
 
 const meta = {
   title: 'UI/AppErrorPresenter',

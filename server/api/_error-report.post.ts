@@ -1,9 +1,9 @@
 import { getHeader, getRequestIP, setResponseStatus } from 'h3';
-import { AppError } from '../exceptions/app-error';
-import { assertClientErrorReportContentLength, parseClientErrorReport, readLimitedClientErrorReportBody } from '../logging/client-error-report';
-import { FixedWindowRateLimiter } from '../logging/fixed-window-rate-limiter';
-import { logger } from '../logging/logger';
-import { notifyError } from '../notifications/notify-error';
+import { AppError } from '~~/server/exceptions/app-error';
+import { assertClientErrorReportContentLength, parseClientErrorReport, readLimitedClientErrorReportBody } from '~~/server/logging/client-error-report';
+import { FixedWindowRateLimiter } from '~~/server/logging/fixed-window-rate-limiter';
+import { logger } from '~~/server/logging/logger';
+import { notifyError } from '~~/server/notifications/notify-error';
 
 const rateLimiter = new FixedWindowRateLimiter();
 

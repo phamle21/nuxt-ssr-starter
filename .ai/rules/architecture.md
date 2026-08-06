@@ -16,7 +16,14 @@ app → shared
 server/api → server/services → server/integrations
 server → shared
 shared → no app or server imports
+tests → app, server, shared
+stories → app/components
+runtime → no tests or stories imports
 ```
+
+Use relative imports within the same module or directory. Use `@/` across application folders and
+`~~/` across repository-root boundaries such as `server/` and `shared/`. Avoid parent-relative import
+chains that cross architectural layers.
 
 ## Layering
 

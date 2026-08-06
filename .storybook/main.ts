@@ -30,6 +30,7 @@ const config: StorybookConfig = {
       resolve: {
         alias: {
           '@': fileURLToPath(new URL('../app', import.meta.url)),
+          '~~': fileURLToPath(new URL('..', import.meta.url)),
           // Resolve Nuxt virtual modules to our stubs
           '#components': nuxtStubs,
           '#imports': nuxtStubs,
@@ -40,7 +41,7 @@ const config: StorybookConfig = {
 
   addons: ['@storybook/addon-docs', '@storybook/addon-a11y', '@storybook/addon-vitest', '@storybook/addon-themes'],
 
-  stories: ['../app/components/**/*.mdx', '../app/components/**/*.stories.ts'],
+  stories: ['../stories/**/*.stories.ts'],
 
   core: { disableTelemetry: true },
 };

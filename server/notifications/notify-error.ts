@@ -1,6 +1,6 @@
 import { useRuntimeConfig } from '#imports';
-import { logger } from '../logging/logger';
-import { isSeverity, severityRank, type Severity } from '../logging/types';
+import { logger } from '~~/server/logging/logger';
+import { isSeverity, severityRank, type Severity } from '~~/server/logging/types';
 import { sendGoogleChatNotification } from './channels/google-chat';
 import { sendSlackNotification } from './channels/slack';
 import type { ErrorNotification } from './types';
